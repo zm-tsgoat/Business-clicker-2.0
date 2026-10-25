@@ -1,0 +1,769 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HOME EMPIRE: Ultimate Edition</title>
+<style>
+:root{
+ --bg:#07111d;--panel:#101e30;--panel2:#152941;--line:#29415b;
+ --text:#f3f7ff;--muted:#91a8c2;--green:#53f5b5;
+ --gold:#ffd36e;--blue:#6bbaff;--red:#ff6e83;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+ font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+button{font:inherit;cursor:pointer;transition:filter .15s,transform .15s}
+button:hover{filter:brightness(1.15)}
+button:active{transform:scale(.97)}
+button:disabled{opacity:.4;cursor:not-allowed;filter:none;transform:none}
+.app{max-width:1600px;margin:auto;padding:12px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;
+ padding:14px 16px;background:#0d1a2aee;border:1px solid var(--line);
+ border-radius:17px;position:sticky;top:4px;z-index:20;flex-wrap:wrap;
+ box-shadow:0 10px 35px #0005;backdrop-filter:blur(16px)}
+.logo{font-size:21px;font-weight:1000;letter-spacing:-.8px}
+.logo span{color:var(--green)}
+.logo small{display:block;color:var(--muted);font-size:10px;letter-spacing:2px}
+.stats{display:flex;gap:22px;flex-wrap:wrap}
+.stat small{display:block;color:var(--muted);font-size:9px;letter-spacing:1px}
+.stat strong{font-size:18px;color:var(--green)}
+.stat:nth-child(2) strong{color:var(--gold)}
+.stat:nth-child(3) strong{color:var(--blue)}
+.btn{border:1px solid #35516c;border-radius:10px;padding:10px 13px;
+ background:#1b3048;color:white;font-weight:800}
+.btn.green{background:linear-gradient(135deg,#72ffd0,#16c58b);color:#05281d;border:0}
+.btn.gold{background:linear-gradient(135deg,#ffed9a,#ffb52e);color:#382400;border:0}
+.btn.blue{background:linear-gradient(135deg,#8cd3ff,#458af8);color:#071d35;border:0}
+.btn.red{background:#54263b;color:#ffc0cb;border-color:#884259}
+.layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,.85fr);gap:13px;margin-top:13px}
+.panel{background:linear-gradient(145deg,#122239,#0b1726);
+ border:1px solid var(--line);border-radius:17px;overflow:hidden;min-width:0}
+.panelhead{padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.panelhead h2{font-size:15px;margin:0}
+.panelhead p{font-size:11px;color:var(--muted);margin:4px 0 0}
+.pill{background:#193c3a;color:var(--green);padding:6px 9px;border-radius:8px;font-size:10px;font-weight:900;white-space:nowrap}
+#world{width:100%;height:auto;aspect-ratio:1.28;display:block;background:#8bc7d2;cursor:crosshair;touch-action:manipulation}
+.worldwrap{position:relative;overflow:hidden}
+.worldtip{position:absolute;top:12px;left:12px;background:#081522c9;
+ border:1px solid #ffffff20;padding:8px 10px;border-radius:9px;font-size:10px;pointer-events:none}
+.worldtip b{color:var(--green)}
+.worldbottom{padding:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--line)}
+.levelbox{flex:1;min-width:130px}
+.levelrow{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:6px}
+.progress{height:7px;border-radius:9px;background:#253b54;overflow:hidden}
+.progress div{height:100%;width:0;background:linear-gradient(90deg,#34dba4,#d2ff88);transition:width .2s}
+.worldfoot{padding:10px 14px;color:var(--muted);font-size:10px;display:flex;justify-content:space-between;gap:8px}
+.tabs{display:flex;gap:5px;padding:10px;overflow-x:auto;border-bottom:1px solid var(--line)}
+.tab{border:1px solid transparent;background:#192b41;color:#9eb3cb;
+ padding:9px 11px;border-radius:9px;font-size:11px;font-weight:900;white-space:nowrap}
+.tab.active{color:var(--green);background:#17413c;border-color:#287f6c}
+.list{padding:10px;display:grid;gap:8px;max-height:620px;overflow:auto}
+.item{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:9px;
+ align-items:center;padding:10px;background:linear-gradient(130deg,#182d46,#102036);
+ border:1px solid #29425d;border-radius:12px}
+.itemicon{width:44px;height:44px;display:grid;place-items:center;
+ border-radius:11px;background:#233b56;font-size:23px}
+.item h3{font-size:12px;margin:0 0 4px}
+.item p{font-size:10px;line-height:1.5;color:var(--muted);margin:0}
+.item .greenText{color:var(--green)}
+.buy{min-width:78px;border:0;border-radius:9px;padding:9px 6px;
+ background:linear-gradient(135deg,#66ffd0,#19c48d);color:#05291e;font-weight:1000;font-size:10px}
+.buy.owned{background:#203b4a;color:#8effd7}
+.buy.locked{background:#253347;color:#8b9bb1}
+.sidefoot{display:flex;gap:7px;padding:10px;border-top:1px solid var(--line)}
+.sidefoot .btn{flex:1;font-size:11px}
+.bottomgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:13px}
+.box{background:linear-gradient(145deg,#14263c,#0c1928);border:1px solid var(--line);border-radius:15px;padding:15px;min-width:0}
+.box h3{margin:0 0 8px;font-size:14px}
+.box p{margin:0 0 12px;color:var(--muted);font-size:11px;line-height:1.6}
+.box .btn{font-size:11px}
+.questline{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid #293d52;font-size:11px}
+.questline:last-child{border:0}
+.questline small{display:block;color:var(--muted);margin-top:3px}
+.toast{position:fixed;z-index:100;bottom:20px;left:50%;transform:translateX(-50%);
+ background:#132a40;border:1px solid #49708d;padding:12px 17px;border-radius:12px;
+ box-shadow:0 10px 35px #0009;font-size:12px;text-align:center;max-width:90%;
+ animation:pop .2s ease}
+@keyframes pop{from{opacity:0;translate:0 10px}to{opacity:1;translate:0 0}}
+.modalback{display:none;position:fixed;inset:0;z-index:80;background:#020812cf;
+ place-items:center;padding:16px}
+.modalback.show{display:grid}
+.modal{width:min(500px,100%);max-height:85vh;overflow:auto;padding:21px;
+ background:#102139;border:1px solid #385775;border-radius:18px;box-shadow:0 20px 80px #000a}
+.modal h2{margin:0 0 8px}.modal p{font-size:12px;line-height:1.7;color:var(--muted)}
+.modalactions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:18px}
+footer{text-align:center;padding:17px;color:#59728d;font-size:10px}
+@media(max-width:950px){.layout{grid-template-columns:1fr}.list{max-height:none}.bottomgrid{grid-template-columns:1fr 1fr}}
+@media(max-width:540px){
+ .app{padding:6px}.stats{width:100%;justify-content:space-between;gap:8px;
+ border-top:1px solid var(--line);padding-top:9px}.stat strong{font-size:15px}
+ .logo{font-size:18px}.layout{gap:9px}.scene{min-height:250px}
+ .bottomgrid{grid-template-columns:1fr}.item{grid-template-columns:39px minmax(0,1fr) auto;gap:7px}
+ .itemicon{width:39px;height:39px}.buy{min-width:68px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header>
+ <div class="logo">🏡 HOME <span>EMPIRE</span><small>ULTIMATE EDITION • BUILD YOUR DREAM</small></div>
+ <div class="stats">
+  <div class="stat"><small>YOUR CASH</small><strong id="cash">$0</strong></div>
+  <div class="stat"><small>PASSIVE INCOME</small><strong id="income">$0/s</strong></div>
+  <div class="stat"><small>PER CLICK</small><strong id="power">$1</strong></div>
+  <div class="stat"><small>LEVEL</small><strong id="level">1</strong></div>
+ </div>
+ <button class="btn" onclick="showModal('settings')">⚙️</button>
+</header>
+
+<div class="layout">
+ <section class="panel">
+  <div class="panelhead">
+   <div><h2 id="propertyTitle">🏠 THE STARTER HOME</h2><p id="propertyDesc">Your journey to billionaire status starts here.</p></div>
+   <span class="pill" id="rank">NEW OWNER</span>
+  </div>
+
+  <div class="worldwrap">
+   <canvas id="world" width="900" height="700" aria-label="Clickable isometric home scene"></canvas>
+   <div class="worldtip">✦ CLICK YOUR PROPERTY <b>TO EARN CASH</b></div>
+  </div>
+
+  <div class="worldbottom">
+   <button class="btn green" onclick="clickMoney()">💵 COLLECT CASH</button>
+   <button class="btn gold" onclick="dailyGift()">🎁 DAILY GIFT</button>
+   <div class="levelbox">
+    <div class="levelrow"><span>LEVEL PROGRESS</span><span id="xptext">$0 / $100</span></div>
+    <div class="progress"><div id="xpbar"></div></div>
+   </div>
+  </div>
+  <div class="worldfoot"><span id="roomstat">🛋️ Rooms: 0</span><span id="worth">🏡 Property value: $0</span></div>
+ </section>
+
+ <section class="panel">
+  <div class="tabs">
+   <button class="tab active" data-tab="upgrades" onclick="setTab('upgrades')">⚡ UPGRADES</button>
+   <button class="tab" data-tab="rooms" onclick="setTab('rooms')">🛋️ ROOMS</button>
+   <button class="tab" data-tab="cars" onclick="setTab('cars')">🚘 GARAGE</button>
+   <button class="tab" data-tab="quests" onclick="setTab('quests')">🏆 QUESTS</button>
+  </div>
+  <div class="list" id="list"></div>
+  <div class="sidefoot">
+   <button class="btn" onclick="showModal('stats')">📊 STATISTICS</button>
+   <button class="btn" onclick="saveGame(true)">💾 SAVE NOW</button>
+  </div>
+ </section>
+</div>
+
+<div class="bottomgrid">
+ <section class="box">
+  <h3>📦 Mystery delivery</h3>
+  <p id="deliveryText">A mystery package could contain a huge cash reward!</p>
+  <button class="btn gold" id="deliveryBtn" onclick="mysteryBox()">OPEN PACKAGE</button>
+ </section>
+ <section class="box">
+  <h3>🏆 Achievements</h3>
+  <div id="achievements"></div>
+ </section>
+ <section class="box">
+  <h3>👑 Prestige empire</h3>
+  <p>Restart your empire for permanent bonuses. The bigger your lifetime earnings, the more stars you can earn.</p>
+  <h2 id="stars">0 ⭐</h2>
+  <button class="btn gold" onclick="showModal('prestige')">START A NEW EMPIRE</button>
+ </section>
+</div>
+
+<footer>HOME EMPIRE • Single-file game • Local browser save • Build your dream</footer>
+</div>
+
+<div class="modalback" id="modalback" onclick="if(event.target===this)closeModal()">
+ <div class="modal" id="modal"></div>
+</div>
+
+<script>
+"use strict";
+
+/* ==========================================
+   HOME EMPIRE: GAME DATA
+========================================== */
+
+const $=id=>document.getElementById(id);
+
+const short=n=>{
+ n=Math.max(0,Number(n)||0);
+ if(n>=1e15)return '$'+(n/1e15).toFixed(2)+'Qa';
+ if(n>=1e12)return '$'+(n/1e12).toFixed(2)+'T';
+ if(n>=1e9)return '$'+(n/1e9).toFixed(2)+'B';
+ if(n>=1e6)return '$'+(n/1e6).toFixed(2)+'M';
+ if(n>=1e4)return '$'+(n/1e3).toFixed(1)+'K';
+ return '$'+Math.floor(n).toLocaleString('en-GB');
+};
+
+const upgradeData=[
+ {id:'click',icon:'👆',name:'Click Power',desc:'Earn more cash with every click.',base:25,growth:1.65},
+ {id:'income',icon:'💵',name:'Passive Income',desc:'Earn cash automatically every second.',base:100,growth:1.7},
+ {id:'auto',icon:'🤖',name:'Auto Clicker',desc:'Automatically collects extra money.',base:350,growth:1.8},
+ {id:'marketing',icon:'📣',name:'Viral House Tour',desc:'Boost all income by 15% per level.',base:900,growth:2},
+ {id:'invest',icon:'📈',name:'Smart Investments',desc:'Grow your entire income by 25%.',base:2500,growth:2.1},
+ {id:'staff',icon:'🧑‍💼',name:'Dream Team',desc:'Professional staff earn money for you.',base:8000,growth:2.15},
+ {id:'solar',icon:'☀️',name:'Solar Roof',desc:'Clean energy creates passive income.',base:25000,growth:2.2},
+ {id:'vault',icon:'🏦',name:'Money Vault',desc:'Increase all earnings by 50%.',base:100000,growth:2.3},
+ {id:'robot',icon:'🦾',name:'Robot Butler',desc:'An advanced assistant for your empire.',base:500000,growth:2.4},
+ {id:'business',icon:'🏢',name:'Property Business',desc:'Make your home a global business.',base:2500000,growth:2.5},
+ {id:'tech',icon:'🧠',name:'AI Home Manager',desc:'A futuristic system runs your empire.',base:15000000,growth:2.6},
+ {id:'portal',icon:'🌀',name:'Money Dimension',desc:'A mysterious portal creates wealth.',base:100000000,growth:2.7}
+];
+
+const roomData=[
+ {id:'living',icon:'🛋️',name:'Living Room',desc:'A comfortable space for guests.',base:150,gain:3},
+ {id:'kitchen',icon:'🍳',name:'Dream Kitchen',desc:'A kitchen worthy of a chef.',base:500,gain:8},
+ {id:'bedroom',icon:'🛏️',name:'Luxury Bedroom',desc:'Sleep like a millionaire.',base:1500,gain:20},
+ {id:'garden',icon:'🌴',name:'Designer Garden',desc:'Beautiful landscaping and trees.',base:4500,gain:55},
+ {id:'pool',icon:'🏊',name:'Infinity Pool',desc:'A luxury pool with ocean views.',base:12000,gain:150},
+ {id:'gym',icon:'🏋️',name:'Private Gym',desc:'Your very own fitness centre.',base:35000,gain:450},
+ {id:'cinema',icon:'🎬',name:'Home Cinema',desc:'A cinema in your own house.',base:100000,gain:1300},
+ {id:'arcade',icon:'🕹️',name:'Gaming Arcade',desc:'The ultimate gaming room.',base:350000,gain:5000},
+ {id:'penthouse',icon:'🌇',name:'Penthouse Floor',desc:'Expand your home upwards.',base:1500000,gain:22000},
+ {id:'studio',icon:'🎵',name:'Creator Studio',desc:'Make your own media empire.',base:8000000,gain:150000},
+ {id:'lab',icon:'🧪',name:'Research Lab',desc:'Invent tomorrow from home.',base:50000000,gain:1200000},
+ {id:'spaceship',icon:'🚀',name:'Space Observatory',desc:'Your mansion reaches for the stars.',base:500000000,gain:15000000}
+];
+
+const carData=[
+ {id:'starter',icon:'🚗',name:'Starter Hatchback',cost:0,gain:0},
+ {id:'sport',icon:'🏎️',name:'Sports Coupe',cost:2500,gain:10},
+ {id:'porsche',icon:'🏁',name:'Track Racer',cost:25000,gain:100},
+ {id:'lambo',icon:'🟡',name:'Lamborghini',cost:200000,gain:900},
+ {id:'mclaren',icon:'🏎️',name:'Hypercar',cost:2000000,gain:12000},
+ {id:'luxury',icon:'🚘',name:'Luxury Grand Tourer',cost:25000000,gain:150000},
+ {id:'concept',icon:'🚀',name:'Future Concept',cost:1000000000,gain:8000000},
+ {id:'royal',icon:'👑',name:'Royal Collection',cost:25000000000,gain:200000000}
+];
+
+const achievementsData=[
+ {id:'click1',icon:'👆',name:'First Click',desc:'Click once.',reward:25,check:()=>s.totalClicks>=1},
+ {id:'cash100',icon:'💵',name:'Pocket Money',desc:'Earn $100 total.',reward:100,check:()=>s.totalEarned>=100},
+ {id:'room1',icon:'🛋️',name:'Interior Designer',desc:'Upgrade a room.',reward:150,check:()=>s.roomsBought>=1},
+ {id:'car1',icon:'🚘',name:'New Wheels',desc:'Buy a new car.',reward:300,check:()=>s.carsBought>=1},
+ {id:'cash100k',icon:'💎',name:'Six Figures',desc:'Hold $100,000.',reward:5000,check:()=>s.cash>=100000},
+ {id:'level10',icon:'🏡',name:'Property Mogul',desc:'Reach level 10.',reward:10000,check:()=>s.level>=10},
+ {id:'rooms7',icon:'🏰',name:'Dream Home',desc:'Buy seven room upgrades.',reward:50000,check:()=>s.roomsBought>=7},
+ {id:'prestige1',icon:'👑',name:'Fresh Start',desc:'Prestige once.',reward:25000,check:()=>s.prestige>=1},
+ {id:'click1000',icon:'🖱️',name:'Click Legend',desc:'Click 1,000 times.',reward:25000,check:()=>s.totalClicks>=1000},
+ {id:'million',icon:'🤑',name:'Millionaire',desc:'Earn $1,000,000 total.',reward:100000,check:()=>s.totalEarned>=1e6}
+];
+
+function newGame(){
+ return {
+  cash:0,totalEarned:0,totalClicks:0,level:1,
+  clickLevel:0,incomeLevel:0,autoLevel:0,marketingLevel:0,
+  investLevel:0,staffLevel:0,solarLevel:0,vaultLevel:0,
+  robotLevel:0,businessLevel:0,techLevel:0,portalLevel:0,
+  roomsBought:0,roomLevels:{},carsBought:0,carIndex:0,
+  prestige:0,achievements:[],claimedDaily:'',
+  nextBox:0,lastSeen:Date.now(),totalPrestiges:0
+ };
+}
+
+let s=newGame();
+let activeTab='upgrades';
+let lastTick=Date.now();
+let lastSave=Date.now();
+let particles=[];
+let worldTime=0;
+let sceneCanvas=$('world');
+let ctx=sceneCanvas.getContext('2d');
+let toastTimer;
+
+function loadGame(){
+ try{
+  const raw=localStorage.getItem('homeEmpireUltimate');
+  if(raw){
+   const saved=JSON.parse(raw);
+   s={...newGame(),...saved};
+   s.roomLevels=s.roomLevels||{};
+   s.achievements=s.achievements||[];
+   const seconds=Math.min(28800,Math.max(0,(Date.now()-(s.lastSeen||Date.now()))/1000));
+   if(seconds>10){
+    const bonus=incomePerSecond()*seconds;
+    s.cash+=bonus;s.totalEarned+=bonus;
+    setTimeout(()=>notify('Welcome back! Your empire earned '+short(bonus)+' while away.'),700);
+   }
+  }
+ }catch(e){
+  console.warn('Could not load save.',e);
+ }
+ s.lastSeen=Date.now();
+}
+
+function saveGame(manual=false){
+ try{
+  s.lastSeen=Date.now();
+  localStorage.setItem('homeEmpireUltimate',JSON.stringify(s));
+  if(manual)notify('Progress saved successfully! 💾');
+ }catch(e){
+  if(manual)notify('Your browser could not save this game.');
+ }
+}
+
+function mult(){
+ return (1+s.prestige*.15)*
+ (1+s.marketingLevel*.15)*
+ (1+s.investLevel*.25)*
+ (1+s.vaultLevel*.5)*
+ (1+s.robotLevel*.1);
+}
+function clickPower(){
+ return (1+s.clickLevel*1.5)*mult();
+}
+function incomePerSecond(){
+ let n=s.incomeLevel*2+s.autoLevel*1+s.staffLevel*25+
+ s.solarLevel*100+s.businessLevel*1500+
+ s.techLevel*50000+s.portalLevel*1000000;
+ roomData.forEach(r=>n+=(s.roomLevels[r.id]||0)*r.gain);
+ carData.forEach((c,i)=>{if(i>0&&i<=s.carIndex)n+=c.gain;});
+ return n*mult();
+}
+function upgradeCost(u){
+ return Math.floor(u.base*Math.pow(u.growth,s[u.id+'Level']||0));
+}
+function roomCost(r){
+ return Math.floor(r.base*Math.pow(2.05,s.roomLevels[r.id]||0));
+}
+
+/* ==========================================
+   CLICKING AND GAME PROGRESSION
+========================================== */
+
+function addCash(n){
+ if(!Number.isFinite(n)||n<=0)return;
+ s.cash+=n;s.totalEarned+=n;
+ checkLevel();
+ checkAchievements();
+}
+function clickMoney(e){
+ const n=clickPower();
+ addCash(n);s.totalClicks++;
+ if(e&&sceneCanvas){
+  const rect=sceneCanvas.getBoundingClientRect();
+  const x=(e.clientX-rect.left)/rect.width*900;
+  const y=(e.clientY-rect.top)/rect.height*700;
+  particles.push({x,y,text:'+'+short(n),life:1,color:'#7cffca',size:22});
+ }
+ updateUI();
+}
+function checkLevel(){
+ while(s.level<100&&s.totalEarned>=100*s.level*s.level){
+  s.level++;
+  const bonus=s.level*50;
+  s.cash+=bonus;
+  notify('LEVEL UP! Level '+s.level+' — bonus '+short(bonus)+' 🎉');
+ }
+}
+function checkAchievements(){
+ achievementsData.forEach(a=>{
+  if(!s.achievements.includes(a.id)&&a.check()){
+   s.achievements.push(a.id);
+   s.cash+=a.reward;
+   notify('🏆 '+a.name+'! Bonus '+short(a.reward));
+  }
+ });
+}
+function buyUpgrade(id){
+ const u=upgradeData.find(x=>x.id===id);
+ if(!u)return;
+ const cost=upgradeCost(u);
+ if(s.cash<cost)return notify('Not enough cash!');
+ s.cash-=cost;s[id+'Level']=(s[id+'Level']||0)+1;
+ notify(u.name+' upgraded!');updateUI();
+}
+function buyRoom(id){
+ const r=roomData.find(x=>x.id===id);
+ if(!r)return;
+ const cost=roomCost(r);
+ if(s.cash<cost)return notify('You need '+short(cost-s.cash)+' more.');
+ s.cash-=cost;s.roomLevels[id]=(s.roomLevels[id]||0)+1;
+ s.roomsBought++;
+ notify(r.name+' upgraded! +'+short(r.gain)+' per second.');
+ checkAchievements();updateUI();
+}
+function buyCar(id){
+ const i=carData.findIndex(c=>c.id===id);
+ const c=carData[i];
+ if(!c||i<=s.carIndex)return;
+ if(i!==s.carIndex+1)return notify('Unlock the previous car first!');
+ if(s.cash<c.cost)return notify('Not enough cash for this car!');
+ s.cash-=c.cost;s.carIndex=i;s.carsBought++;
+ notify('NEW CAR: '+c.name+'! 🚘');
+ checkAchievements();updateUI();
+}
+
+/* ==========================================
+   SHOP AND TABS
+========================================== */
+
+function setTab(t){
+ activeTab=t;
+ document.querySelectorAll('.tab').forEach(b=>{
+  b.classList.toggle('active',b.dataset.tab===t);
+ });
+ renderList();
+}
+function createItem(icon,name,description,cost,enabled,label,fn,owned=false){
+ const el=document.createElement('article');
+ el.className='item';
+ const a=document.createElement('div');a.className='itemicon';a.textContent=icon;
+ const body=document.createElement('div');
+ const title=document.createElement('h3');title.textContent=name;
+ const desc=document.createElement('p');desc.innerHTML=description;
+ body.append(title,desc);
+ const actions=document.createElement('div');
+ const b=document.createElement('button');
+ b.className='buy'+(owned?' owned':'');
+ b.textContent=label;b.disabled=!enabled;
+ b.onclick=fn;actions.appendChild(b);
+ el.append(a,body,actions);
+ return el;
+}
+function renderList(){
+ const list=$('list');list.replaceChildren();
+ if(activeTab==='upgrades'){
+  upgradeData.forEach(u=>{
+   const lv=s[u.id+'Level']||0,c=upgradeCost(u);
+   let gain=u.id==='click'?'+1.5 base click power':
+    ['income','auto','staff','solar','robot','business','tech','portal'].includes(u.id)?
+    '+'+short(({income:2,auto:1,staff:25,solar:100,robot:0,business:1500,tech:50000,portal:1000000})[u.id])+' income per second':
+    'Boost your earnings';
+   list.appendChild(createItem(u.icon,u.name,
+    'Level '+lv+' • '+u.desc+'<br><span class="greenText">'+gain+'</span>',
+    c,s.cash>=c,'UPGRADE',()=>buyUpgrade(u.id)));
+  });
+ }else if(activeTab==='rooms'){
+  roomData.forEach(r=>{
+   const lv=s.roomLevels[r.id]||0,c=roomCost(r);
+   list.appendChild(createItem(r.icon,r.name,
+    (lv?'Level '+lv+' • ':'')+r.desc+'<br><span class="greenText">+'+
+    short(r.gain)+' income / sec per level</span>',c,s.cash>=c,
+    lv?'UPGRADE':'BUILD',()=>buyRoom(r.id),lv>0));
+  });
+ }else if(activeTab==='cars'){
+  carData.forEach((c,i)=>{
+   const owned=i<=s.carIndex,unlocked=i===s.carIndex+1;
+   list.appendChild(createItem(c.icon,c.name,
+    (owned?'In your collection':'')+'<br><span class="greenText">+'+
+    short(c.gain)+' / sec</span>',c.cost,!owned&&unlocked&&s.cash>=c.cost,
+    owned?'OWNED':i>s.carIndex+1?'🔒 LOCKED':'BUY CAR',()=>buyCar(c.id),owned));
+  });
+ }else{
+  achievementsData.forEach(a=>{
+   const done=s.achievements.includes(a.id),ready=a.check();
+   list.appendChild(createItem(a.icon,a.name,a.desc+'<br><span class="greenText">Reward: '+
+    short(a.reward)+'</span>',0,ready&&!done,done?'COMPLETED':ready?'CLAIM':'IN PROGRESS',
+    ()=>claimAchievement(a.id),done));
+  });
+ }
+}
+function claimAchievement(id){
+ const a=achievementsData.find(x=>x.id===id);
+ if(!a||s.achievements.includes(id)||!a.check())return;
+ s.achievements.push(id);s.cash+=a.reward;
+ notify('Claimed '+short(a.reward)+'!');updateUI();
+}
+
+/* ==========================================
+   GIFTS, EVENTS, AND PRESTIGE
+========================================== */
+
+function dailyGift(){
+ const today=new Date().toDateString();
+ if(s.claimedDaily===today)return notify('Daily gift already claimed!');
+ const reward=Math.max(100,Math.floor(100+incomePerSecond()*60+clickPower()*25));
+ s.claimedDaily=today;addCash(reward);
+ notify('DAILY REWARD: '+short(reward)+' 🎁');updateUI();
+}
+function mysteryBox(){
+ if(Date.now()<s.nextBox)return notify('Your next mystery box is on its way!');
+ const reward=Math.floor(100+Math.random()*Math.max(500,clickPower()*100+incomePerSecond()*100));
+ s.nextBox=Date.now()+60000;addCash(reward);
+ notify('MYSTERY BOX: '+short(reward)+'! 📦');updateUI();
+}
+function prestigeGain(){
+ return Math.floor(Math.sqrt(Math.max(0,s.totalEarned)/1000000));
+}
+function prestige(){
+ const gain=prestigeGain();
+ if(gain<1)return notify('Earn $1,000,000 lifetime cash first!');
+ const stars=s.prestige+gain;
+ s=newGame();s.prestige=stars;s.totalPrestiges=stars;
+ saveGame();closeModal();updateUI();
+ notify('A new empire begins! '+stars+' prestige stars ⭐');
+}
+
+/* ==========================================
+   USER INTERFACE
+========================================== */
+
+function notify(msg){
+ document.querySelectorAll('.toast').forEach(x=>x.remove());
+ const n=document.createElement('div');
+ n.className='toast';n.textContent=msg;
+ document.body.appendChild(n);
+ setTimeout(()=>n.remove(),2800);
+}
+function showModal(type){
+ const m=$('modal');let html='';
+ if(type==='settings'){
+  html='<h2>⚙️ Settings</h2>'+
+  '<p>Your progress is saved automatically to this browser. Save before closing the game.</p>'+
+  '<p>Sound effects are not required. The game runs offline.</p>'+
+  '<div class="modalactions"><button class="btn" onclick="saveGame(true)">SAVE</button>'+
+  '<button class="btn" onclick="closeModal()">CLOSE</button>'+
+  '<button class="btn red" onclick="resetGame()">RESET GAME</button></div>';
+ }else if(type==='stats'){
+  html='<h2>📊 Empire statistics</h2>'+
+  '<p>Lifetime cash earned: <b>'+short(s.totalEarned)+'</b></p>'+
+  '<p>Total clicks: <b>'+s.totalClicks.toLocaleString()+'</b></p>'+
+  '<p>Passive income: <b>'+short(incomePerSecond())+'/sec</b></p>'+
+  '<p>Click power: <b>'+short(clickPower())+'</b></p>'+
+  '<p>Room upgrades: <b>'+s.roomsBought+'</b></p>'+
+  '<p>Cars unlocked: <b>'+(s.carIndex+1)+'</b></p>'+
+  '<p>Achievements: <b>'+s.achievements.length+'/'+achievementsData.length+'</b></p>'+
+  '<p>Prestige stars: <b>'+s.prestige+'</b></p>'+
+  '<div class="modalactions"><button class="btn green" onclick="closeModal()">BACK</button></div>';
+ }else{
+  const gain=prestigeGain();
+  html='<h2>👑 Prestige your empire</h2>'+
+  '<p>Restart your home, rooms, upgrades, and cars to gain permanent bonuses.</p>'+
+  '<p>Current prestige stars: <b>'+s.prestige+'</b></p>'+
+  '<p>Stars available now: <b>'+gain+'</b></p>'+
+  '<p>Every star increases earnings by 15%. You need at least $1 million lifetime earnings.</p>'+
+  '<div class="modalactions"><button class="btn" onclick="closeModal()">CANCEL</button>'+
+  '<button class="btn gold" '+(gain<1?'disabled':'')+' onclick="prestige()">START AGAIN</button></div>';
+ }
+ m.innerHTML=html;$('modalback').classList.add('show');
+}
+function closeModal(){$('modalback').classList.remove('show')}
+function resetGame(){
+ if(!confirm('Permanently erase your Home Empire save?'))return;
+ localStorage.removeItem('homeEmpireUltimate');s=newGame();
+ closeModal();updateUI();notify('Fresh start! 🏡');
+}
+
+/* ==========================================
+   2.5D ISOMETRIC WORLD RENDERER
+========================================== */
+
+function poly(points,fill,stroke){
+ ctx.beginPath();ctx.moveTo(points[0][0],points[0][1]);
+ points.slice(1).forEach(p=>ctx.lineTo(p[0],p[1]));
+ ctx.closePath();ctx.fillStyle=fill;ctx.fill();
+ if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=2;ctx.stroke();}
+}
+function isoBox(x,y,w,d,h,top,left,right){
+ poly([[x,y],[x+w,y+d],[x+w,y+d+h],[x,y+h]],left);
+ poly([[x+w,y+d],[x+w+d*.45,y+d*.4],[x+w+d*.45,y+d*.4+h],[x+w,y+d+h]],right);
+ poly([[x,y],[x+w*.45,y-d*.4],[x+w+d*.45,y+d*.4],[x+w,y+d]],top);
+}
+function drawTree(x,y,scale=1){
+ ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
+ poly([[-5,0],[5,0],[7,22],[-7,22]],'#76543d');
+ [[0,-30,'#236b4d'],[-12,-18,'#30855b'],[13,-17,'#3c9564'],[0,-8,'#195c48']]
+ .forEach(([a,b,c])=>{
+  ctx.beginPath();ctx.arc(a,b,17,0,Math.PI*2);ctx.fillStyle=c;ctx.fill();
+ });
+ ctx.restore();
+}
+function drawCar(x,y,color,scale=1){
+ ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
+ poly([[-35,0],[-21,-13],[10,-14],[29,-4],[36,0],[30,8],[-30,8]],color);
+ poly([[-17,-13],[-7,-24],[10,-23],[22,-9]],'#85d7f3');
+ [[-22,7],[23,7]].forEach(([a,b])=>{
+  ctx.beginPath();ctx.arc(a,b,7,0,Math.PI*2);ctx.fillStyle='#101722';ctx.fill();
+  ctx.beginPath();ctx.arc(a,b,3,0,Math.PI*2);ctx.fillStyle='#9baec2';ctx.fill();
+ });
+ ctx.restore();
+}
+function drawWorld(){
+ if(!ctx)return;
+ const W=900,H=700;
+ ctx.clearRect(0,0,W,H);
+ worldTime+=.012;
+ const sky=ctx.createLinearGradient(0,0,0,H);
+ sky.addColorStop(0,'#8bc8e0');sky.addColorStop(.44,'#e0d9c0');sky.addColorStop(1,'#4e9a70');
+ ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
+ ctx.fillStyle='#fff1ba';ctx.beginPath();ctx.arc(715,90,43,0,Math.PI*2);ctx.fill();
+ ctx.globalAlpha=.25;
+ for(let i=0;i<5;i++){
+  const x=(i*205+worldTime*9)%1050-70;
+  ctx.fillStyle='#fff';ctx.beginPath();ctx.ellipse(x,95+i%3*27,45,12,0,0,Math.PI*2);ctx.fill();
+ }
+ ctx.globalAlpha=1;
+ // Distant skyline
+ for(let i=0;i<14;i++){
+  const x=i*75-20,h=65+(i*37%130);
+  ctx.fillStyle=['#698c9e','#789bad','#4c738a'][i%3];
+  ctx.fillRect(x,320-h,52,h);
+  ctx.fillStyle='#d5e8e8';
+  for(let yy=330-h;yy<310;yy+=19)
+   for(let xx=x+9;xx<x+46;xx+=15)ctx.fillRect(xx,yy,6,8);
+ }
+ // Ground
+ poly([[0,350],[900,330],[900,700],[0,700]],'#4e955d');
+ poly([[0,455],[900,425],[900,475],[0,520]],'#b8aa8c');
+ poly([[0,469],[900,440],[900,455],[0,490]],'#e1d5b7');
+ // Lawn tiles
+ for(let i=0;i<9;i++){
+  ctx.fillStyle=i%2?'#559d60':'#4a8e57';
+  poly([[i*120,500],[i*120+90,496],[i*120+135,700],[i*120+45,700]],ctx.fillStyle);
+ }
+ // Garden path
+ poly([[325,700],[480,700],[508,500],[380,500]],'#d4c6a4');
+ for(let i=0;i<5;i++)poly([[345+i*8,670-i*32],[470-i*3,670-i*32],[470-i*3,674-i*32],[345+i*8,674-i*32]],'#b3a284');
+ // Driveway
+ poly([[570,700],[850,700],[710,430],[625,440]],'#354452');
+ for(let y=480;y<700;y+=35){
+  poly([[638,y],[670,y-2],[672,y+3],[640,y+5]],'#d7d4b7');
+ }
+ // House shadow
+ poly([[155,485],[465,530],[700,410],[390,365]],'#1a423f88');
+ // House main walls
+ poly([[175,360],[425,445],[425,555],[175,470]],'#e8dcca','#a5a99d');
+ poly([[425,445],[610,340],[610,450],[425,555]],'#c4d1d2','#8b9da2');
+ // Second floor
+ poly([[195,270],[425,345],[425,445],[195,370]],'#f3ead9','#adb5b0');
+ poly([[425,345],[590,252],[590,352],[425,445]],'#c8d6d4','#91a7ad');
+ // Roof
+ poly([[155,276],[414,155],[630,253],[425,365]],'#344c61','#d1d7d4');
+ poly([[155,276],[414,155],[414,177],[173,292]],'#536b7b');
+ poly([[414,155],[630,253],[630,276],[414,177]],'#1c3043');
+ // Windows
+ const windowDraw=(x,y,scale=1)=>{
+  ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
+  ctx.fillStyle='#172d44';ctx.fillRect(-23,-26,46,52);
+  ctx.fillStyle='#84d6e9';ctx.fillRect(-18,-21,36,42);
+  ctx.fillStyle='#d5e5de';ctx.fillRect(-2,-21,4,42);ctx.fillRect(-18,-2,36,4);
+  ctx.restore();
+ };
+ windowDraw(262,330,1.1);windowDraw(358,360,1.1);
+ windowDraw(496,344,.9);windowDraw(550,315,.9);
+ windowDraw(258,413,.85);windowDraw(363,447,.85);
+ // Front entrance
+ poly([[414,465],[459,450],[459,532],[414,551]],'#644b3a','#ebdec0');
+ poly([[419,470],[452,459],[452,524],[419,537]],'#835f43');
+ ctx.fillStyle='#f6d981';ctx.beginPath();ctx.arc(445,499,3,0,Math.PI*2);ctx.fill();
+ // Roof sign
+ ctx.fillStyle='#fff3cf';ctx.font='bold 15px system-ui';ctx.textAlign='center';
+ ctx.fillText(s.level>=15?'EMPIRE ESTATE':s.level>=6?'DREAM HOME':'MY HOME',411,252);
+ // Garage
+ poly([[540,389],[645,330],[720,363],[614,425]],'#344b60');
+ poly([[540,389],[614,425],[614,483],[540,446]],'#c6d2cc');
+ poly([[614,425],[720,363],[720,420],[614,483]],'#9aaeb4');
+ poly([[552,400],[605,427],[605,464],[552,438]],'#162e42');
+ poly([[610,431],[706,375],[706,412],[610,469]],'#172c40');
+ // Pool
+ if(s.roomLevels.pool){
+  poly([[53,475],[190,446],[270,487],[130,523]],'#d7e5d5');
+  poly([[63,475],[190,454],[257,487],[129,512]],'#32d4f0');
+  for(let i=0;i<4;i++)poly([[80+i*30,477-i*5],[103+i*30,472-i*5],[125+i*30,481-i*5],[102+i*30,486-i*5]],'#a7f6ff');
+ }
+ // Trees
+ drawTree(90,455,1.4);drawTree(145,400,1);drawTree(775,430,1.5);
+ drawTree(830,490,1.1);drawTree(55,555,.85);
+ // Room-related decorations
+ if(s.roomLevels.garden){drawTree(205,520,.8);drawTree(725,500,.8);}
+ if(s.roomLevels.gym){
+  ctx.fillStyle='#23354b';ctx.fillRect(65,545,60,10);
+  ctx.fillStyle='#b2c6d4';ctx.fillRect(73,534,7,25);ctx.fillRect(112,534,7,25);
+ }
+ if(s.roomLevels.cinema){
+  ctx.fillStyle='#ffd66b';ctx.fillRect(70,590,45,24);
+  ctx.fillStyle='#fff4b0';ctx.fillRect(75,594,35,16);
+ }
+ // Car on driveway
+ const colors=['#647b8f','#c1d8e8','#db343c','#f2c72c','#e8f2f7','#162b43','#9d78ff','#e4b75e'];
+ drawCar(650,550,colors[s.carIndex%colors.length],1.15);
+ // Floating particles
+ particles.forEach(p=>{
+  ctx.globalAlpha=Math.max(0,p.life);
+  ctx.fillStyle=p.color;ctx.font='bold '+p.size+'px system-ui';
+  ctx.textAlign='center';ctx.fillText(p.text,p.x,p.y);
+  p.y-=1.2;p.life-=.025;
+ });
+ ctx.globalAlpha=1;
+ particles=particles.filter(p=>p.life>0);
+ requestAnimationFrame(drawWorld);
+}
+
+/* ==========================================
+   UI REFRESH AND MAIN LOOP
+========================================== */
+
+function updateUI(){
+ $('cash').textContent=short(s.cash);
+ $('income').textContent=short(incomePerSecond())+'/s';
+ $('power').textContent='+'+short(clickPower());
+ $('level').textContent=s.level;
+ $('stars').textContent=s.prestige+' ⭐';
+ $('roomstat').textContent='🛋️ Rooms: '+s.roomsBought;
+ $('worth').textContent='🏡 Value: '+short(s.totalEarned+s.roomsBought*500+(s.carIndex*2500)+s.level*1000);
+ $('propertyTitle').textContent=s.level>=25?'🏰 THE EMPIRE ESTATE':
+  s.level>=12?'🏡 LUXURY DREAM MANSION':
+  s.level>=5?'🏠 THE DREAM HOME':'🏠 THE STARTER HOME';
+ $('propertyDesc').textContent=s.level>=12?'Your property empire is growing into something legendary.':
+  'Upgrade your home, collect cars, and build your fortune.';
+ $('rank').textContent=s.level>=25?'PROPERTY LEGEND':s.level>=12?'REAL ESTATE TYCOON':s.level>=5?'RISING OWNER':'NEW OWNER';
+ const goal=100*s.level*s.level;
+ $('xptext').textContent=short(s.totalEarned)+' / '+short(goal);
+ $('xpbar').style.width=Math.min(100,s.totalEarned/goal*100)+'%';
+ $('deliveryText').textContent=Date.now()<s.nextBox?
+  'Next package in '+Math.ceil((s.nextBox-Date.now())/1000)+' seconds.':
+  'A mystery package could contain a huge cash reward!';
+ $('deliveryBtn').disabled=Date.now()<s.nextBox;
+ renderAchievements();renderList();
+}
+function renderAchievements(){
+ const el=$('achievements');el.replaceChildren();
+ achievementsData.slice(0,4).forEach(a=>{
+  const done=s.achievements.includes(a.id);
+  const row=document.createElement('div');row.className='questline';
+  const title=document.createElement('div');
+  title.innerHTML=a.icon+' <b></b><small></small>';
+  title.querySelector('b').textContent=a.name;
+  title.querySelector('small').textContent=done?'Completed ✓':a.desc;
+  const status=document.createElement('span');
+  status.style.color=done?'var(--green)':'var(--muted)';
+  status.textContent=done?'✓':'○';row.append(title,status);el.append(row);
+ });
+}
+function tick(){
+ const now=Date.now();
+ const dt=Math.min(5,(now-lastTick)/1000);lastTick=now;
+ const passive=incomePerSecond()*dt;
+ const auto=clickPower()*.35*s.autoLevel*dt;
+ addCash(passive+auto);
+ if(now-lastSave>5000){saveGame();lastSave=now;}
+ updateUI();
+}
+loadGame();
+updateUI();
+drawWorld();
+sceneCanvas.addEventListener('click',e=>clickMoney(e));
+setInterval(tick,1000);
+
+/* Keyboard shortcuts */
+document.addEventListener('keydown',e=>{
+ if(e.code==='Space'&&e.target.tagName!=='INPUT'&&e.target.tagName!=='TEXTAREA'){
+  e.preventDefault();clickMoney();
+ }
+ if(e.key==='Escape')closeModal();
+});
+window.addEventListener('beforeunload',()=>saveGame());
+document.addEventListener('visibilitychange',()=>{
+ if(document.hidden)saveGame();
+ else {lastTick=Date.now();updateUI();}
+});
+</script>
+</body>
+</html>
